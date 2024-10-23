@@ -1,20 +1,26 @@
+/*
+* @author
+* Mariano Camposeco {@literal (mariano1941@outlook.es)}
+*/
 import User from '../models/user-model.js';
 import jwt from 'jsonwebtoken';
-import bcrypt from 'bcryptjs';
 
 const register = async (req, res) => {
-    const { username, name, lastname, email, pin, phone, genre, active, notifyme } = req.body;
+    const { username, name, lastname, email, pin, phone, genre, active = 1, notifyme = 0 } = req.body;
+
+    if (!username || !name || !email || !pin) {
+        return res.status(400).json({ error: 'Required fields are missing.' });
+    }
+
     try {
-        encripted_pin = await hashPassword(pin);
         const user = await User.create({
             username,
             name,
             lastname,
             email,
-            pin: encripted_pin,
+            pin,
             phone,
             genre,
-            registration_date: new Date(),
             active,
             notifyme
         });
@@ -30,21 +36,31 @@ const register = async (req, res) => {
 
         res.status(201).json({ token });
     } catch (error) {
-        res.status(400).json({ error: error.message });
+        if (error.name === 'SequelizeUniqueConstraintError') {
+            return res.status(409).json({ error: 'Username or email is already in use.' });
+        }
+        res.status(500).json({ error: 'Internal server error.' });
     }
 };
 
 const login = async (req, res) => {
-    const { email, pin } = req.body;
+    const { email, pin: enteredPin } = req.body;
+
+    if (!email || !enteredPin) {
+        return res.status(400).json({ message: 'Email and pin are required.' });
+    }
+
     try {
         const user = await User.findOne({ where: { email } });
 
         if (!user) {
-            return res.status(404).json({ message: 'User not found' });
+            return res.status(404).json({ message: 'User not found.' });
         }
 
-        if (!bcrypt.compareSync(pin, user.pin)) {
-            return res.status(401).json({ message: 'Incorrect pin' });
+        const isMatch = await user.matchPassword(enteredPin);
+
+        if (!isMatch) {
+            return res.status(401).json({ message: 'Incorrect pin.' });
         }
 
         const dataToken = {
@@ -58,7 +74,12 @@ const login = async (req, res) => {
 
         res.json({ token });
     } catch (error) {
-        res.status(500).json({ error: error.message });
+        if (error.name === 'SequelizeDatabaseError') {
+            return res.status(500).json({ message: 'Database error occurred.' });
+        }
+
+        console.error('Error during login:', error);
+        res.status(500).json({ error: 'Internal server error.' });
     }
 };
 
