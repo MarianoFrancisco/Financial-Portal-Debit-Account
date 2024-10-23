@@ -2,10 +2,10 @@
 * @author
 * Mariano Camposeco {@literal (mariano1941@outlook.es)}
 */
-import { DataTypes } from 'sequelize';
-import { define } from '../../config/database-connection';  // Assuming you have a defined DB connection
+import DataTypes from 'sequelize';
+import sequelize from '../../config/database-connection.js';  // Assuming you have a defined DB connection
 
-const User = define('user', {
+const User = sequelize.define('user', {
     id: {
         type: DataTypes.INTEGER,
         allowNull: false,
