@@ -3,7 +3,9 @@
 * Mariano Camposeco {@literal (mariano1941@outlook.es)}
 */
 import DataTypes from 'sequelize';
-import sequelize from '../../config/database-connection.js';  // Assuming you have a defined DB connection
+import sequelize from '../../config/database-connection.js';
+import hashPassword from '../utils/encryption.js';
+import bcrypt from 'bcryptjs';
 
 const User = sequelize.define('user', {
     id: {
@@ -44,9 +46,9 @@ const User = sequelize.define('user', {
         defaultValue: 'Other'
     },
     registration_date: {
-        type: DataTypes.DATE,
+        type: DataTypes.BIGINT,
         allowNull: false,
-        defaultValue: DataTypes.NOW
+        defaultValue: Math.floor(Date.now() / 1000)
     },
     active: {
         type: DataTypes.BOOLEAN,
@@ -59,8 +61,19 @@ const User = sequelize.define('user', {
         defaultValue: false
     }
 }, {
-    tableName: 'users',
-    timestamps: false
+    tableName: 'user',
+    timestamps: false,
+    hooks: {
+        beforeSave: async (user) => {
+            if (user.pin) {
+                user.pin = await hashPassword(user.pin);
+            }
+        }
+    }
 });
+
+User.prototype.matchPassword = async function (enteredPassword) {
+    return await bcrypt.compare(enteredPassword, this.pin);
+};
 
 export default User;
