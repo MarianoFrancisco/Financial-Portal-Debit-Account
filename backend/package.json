@@ -2,6 +2,7 @@
   "name": "backend",
   "version": "1.0.0",
   "description": "Portal responsible for maintaining customer bank accounts.",
+  "type": "module",
   "main": "index.js",
   "scripts": {
     "start": "node index.js",
@@ -23,7 +24,9 @@
     "express": "^4.19.2",
     "jsonwebtoken": "^9.0.2",
     "multer": "^1.4.5-lts.1",
-    "path": "^0.12.7"
+    "path": "^0.12.7",
+    "mysql2": "^3.10.0",
+    "sequelize": "^6.37.3"
   },
   "bugs": {
     "url": "https://github.com/MarianoFrancisco/Financial-Portal-Debit-Account/issues"
