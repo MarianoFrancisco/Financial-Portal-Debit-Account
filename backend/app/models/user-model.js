@@ -4,10 +4,10 @@
 */
 import DataTypes from 'sequelize';
 import sequelize from '../../config/database-connection.js';
-import hashPassword from '../utils/encryption.js';
-import bcrypt from 'bcryptjs';
+import Role from './role-model.js';
+import { encryptPin, decryptPin } from '../utils/encryption.js';
 
-const User = sequelize.define('user', {
+const User = sequelize.define('users', {
     id: {
         type: DataTypes.INTEGER,
         allowNull: false,
@@ -25,7 +25,8 @@ const User = sequelize.define('user', {
     },
     lastname: {
         type: DataTypes.STRING(65),
-        allowNull: true
+        allowNull: true,
+        defaultValue: ""
     },
     email: {
         type: DataTypes.STRING(100),
@@ -38,42 +39,52 @@ const User = sequelize.define('user', {
     },
     phone: {
         type: DataTypes.STRING(15),
-        allowNull: true
+        allowNull: true,
+        defaultValue: ""
     },
     genre: {
         type: DataTypes.ENUM('Male', 'Female', 'Other'),
-        allowNull: false,
+        allowNull: true,
         defaultValue: 'Other'
     },
     registration_date: {
         type: DataTypes.BIGINT,
-        allowNull: false,
+        allowNull: true,
         defaultValue: Math.floor(Date.now() / 1000)
     },
     active: {
-        type: DataTypes.BOOLEAN,
-        allowNull: false,
-        defaultValue: true
+        type: DataTypes.INTEGER,
+        allowNull: true,
+        defaultValue: 1
     },
     notifyme: {
-        type: DataTypes.BOOLEAN,
-        allowNull: false,
-        defaultValue: false
+        type: DataTypes.INTEGER,
+        allowNull: true,
+        defaultValue: 0
+    },
+    role_id: {
+        type: DataTypes.INTEGER,
+        allowNull: false
     }
 }, {
-    tableName: 'user',
+    tableName: 'users',
     timestamps: false,
     hooks: {
         beforeSave: async (user) => {
             if (user.pin) {
-                user.pin = await hashPassword(user.pin);
+                user.pin = encryptPin(user.pin);
             }
         }
     }
 });
 
+
+User.belongsTo(Role, { foreignKey: 'role_id', as: 'role' });
+Role.hasMany(User, { foreignKey: 'role_id' });
+
 User.prototype.matchPassword = async function (enteredPassword) {
-    return await bcrypt.compare(enteredPassword, this.pin);
+    const decryptedPin = decryptPin(this.pin);
+    return enteredPassword === decryptedPin;
 };
 
 export default User;
