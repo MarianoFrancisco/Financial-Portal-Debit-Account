@@ -41,12 +41,19 @@ const getLinkedAccounts = async (req, res) => {
 
 const updateAccountBalance = async (req, res) => {
     const { account_number, amount } = req.body;
+    const tokenLinkedAccounts = req.linkedAccounts;
 
     const transaction = await sequelize.transaction();
 
     try {
         if (!/^-?\d+(\.\d+)?$/.test(amount)) {
             return res.status(400).json({ message: 'Invalid amount format. Please enter a valid number.' });
+        }
+
+        if (tokenLinkedAccounts) {
+            if (!tokenLinkedAccounts.includes(account_number)) {
+                return res.status(400).json({ message: 'Account is not linked.' });
+            }
         }
 
         const parsedAmount = parseFloat(amount);
