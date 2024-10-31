@@ -137,17 +137,31 @@ const getAccountClosures = async (req, res) => {
 
     try {
         const closures = await AccountClosure.findAll({
-            attributes: ['bank_account_id', 'closure_reason', 'closure_date'],
+            attributes: [
+                'bank_account_id',
+                'closure_reason',
+                'closure_date',
+                [sequelize.col('bankAccount.account_name'), 'account_name'],
+                [sequelize.col('bankAccount.account_number'), 'account_number'],
+                [sequelize.col('bankAccount.user.username'), 'username']
+            ],
             where: {
                 closure_date: {
                     [Op.lte]: date,
                 },
             },
-            include: [{
-                model: BankAccount,
-                as: 'bankAccount',
-                attributes: ['account_number', 'balance'],
-            }],
+            include: [
+                {
+                    model: BankAccount,
+                    as: 'bankAccount',
+                    attributes: [],
+                    include: {
+                        model: User,
+                        as: 'user',
+                        attributes: []
+                    }
+                }
+            ],
             order: [['closure_date', 'ASC']],
         });
 
