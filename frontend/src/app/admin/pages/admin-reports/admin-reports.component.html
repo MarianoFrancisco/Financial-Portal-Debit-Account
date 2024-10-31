@@ -1,10 +1,11 @@
-<div>
+<div class="text-center">
     <form [formGroup]="accountForm" class="mb-3">
         <label for="accountNumber">Número de Cuenta:</label>
         <input id="accountNumber" formControlName="accountNumber" type="number" class="form-control"
             placeholder="Ingrese número de cuenta" />
     </form>
-    <input type="date" class="form-control mb-3" [(ngModel)]="selectedDate" />
+    <label for="dateInput" class="mb-2">Seleccionar Fecha:</label>
+    <input id="dateInput" type="date" class="form-control mb-3" [(ngModel)]="selectedDate" />
     <div class="btn-group mb-3" role="group">
         <button class="btn btn-primary" (click)="onDateChange(); onLoadTransactions()">Cargar Transacciones</button>
         <button class="btn btn-secondary" (click)="onDateChange(); onLoadFrozenAccounts()">Cargar Cuentas Congeladas</button>
