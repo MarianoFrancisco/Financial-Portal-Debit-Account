@@ -7,6 +7,16 @@ CREATE TABLE IF NOT EXISTS currencies (
     name VARCHAR(50) NOT NULL UNIQUE
 ) ENGINE=InnoDB;
 
+CREATE TABLE IF NOT EXISTS exchange_rates (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    origin_currency_id INT NOT NULL,
+    destination_currency_id INT NOT NULL,
+    rate DECIMAL(10, 4) NOT NULL,
+    last_update BIGINT NOT NULL,
+    FOREIGN KEY (origin_currency_id) REFERENCES currencies(id) ON DELETE CASCADE ON UPDATE CASCADE,
+    FOREIGN KEY (destination_currency_id) REFERENCES currencies(id) ON DELETE CASCADE ON UPDATE CASCADE
+) ENGINE=InnoDB;
+
 CREATE TABLE IF NOT EXISTS account_tiers (
     id INT AUTO_INCREMENT PRIMARY KEY,
     tier_name VARCHAR(50) NOT NULL UNIQUE,
@@ -48,7 +58,7 @@ CREATE TABLE IF NOT EXISTS bank_accounts (
     currency_id INT NOT NULL,
     balance DECIMAL(18, 2) DEFAULT 0.00,
     creation_date BIGINT NOT NULL,
-    is_delete INT NOT NULL,
+    close INT NOT NULL,
     FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE CASCADE ON UPDATE CASCADE,
     FOREIGN KEY (account_tier_id) REFERENCES account_tiers(id) ON DELETE CASCADE ON UPDATE CASCADE,
     FOREIGN KEY (currency_id) REFERENCES currencies(id) ON DELETE CASCADE ON UPDATE CASCADE
@@ -69,25 +79,15 @@ CREATE TABLE IF NOT EXISTS transactions (
     bank_account_id INT NOT NULL,
     transaction_type ENUM('Income', 'Expense') NOT NULL,
     amount DECIMAL(18, 2) NOT NULL,
-    transaction_date TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    transaction_date BIGINT NOT NULL,
     FOREIGN KEY (bank_account_id) REFERENCES bank_accounts(id) ON DELETE CASCADE ON UPDATE CASCADE,
     INDEX(bank_account_id, transaction_date)
-) ENGINE=InnoDB;
-
-CREATE TABLE IF NOT EXISTS exchange_rates (
-    id INT AUTO_INCREMENT PRIMARY KEY,
-    origin_currency_id INT NOT NULL,
-    destination_currency_id INT NOT NULL,
-    rate DECIMAL(10, 4) NOT NULL,
-    last_update TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
-    FOREIGN KEY (origin_currency_id) REFERENCES currencies(id) ON DELETE CASCADE ON UPDATE CASCADE,
-    FOREIGN KEY (destination_currency_id) REFERENCES currencies(id) ON DELETE CASCADE ON UPDATE CASCADE
 ) ENGINE=InnoDB;
 
 CREATE TABLE IF NOT EXISTS account_closures (
     id INT AUTO_INCREMENT PRIMARY KEY,
     bank_account_id INT NOT NULL,
     closure_reason VARCHAR(255),
-    closure_date TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    closure_date BIGINT NOT NULL,
     FOREIGN KEY (bank_account_id) REFERENCES bank_accounts(id) ON DELETE CASCADE ON UPDATE CASCADE
 ) ENGINE=InnoDB;

@@ -50,9 +50,9 @@ const register = async (req, res) => {
 };
 
 const login = async (req, res) => {
-    const { username, pin: enteredPin } = req.body;
+    const { username, pin } = req.body;
 
-    if (!username || !enteredPin) {
+    if (!username || !pin) {
         return res.status(400).json({ message: 'Username and pin are required.' });
     }
 
@@ -63,7 +63,7 @@ const login = async (req, res) => {
             return res.status(404).json({ message: 'User not found.' });
         }
 
-        const isMatch = await user.matchPassword(enteredPin);
+        const isMatch = await user.matchPassword(pin);
 
         if (!isMatch) {
             return res.status(401).json({ message: 'Incorrect pin.' });

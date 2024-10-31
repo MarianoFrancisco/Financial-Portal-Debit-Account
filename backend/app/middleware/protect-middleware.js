@@ -18,7 +18,7 @@ const protect = async (req, res, next) => {
     try {
         const decoded = jwt.verify(token, process.env.ENCRYPTION_KEY);
 
-        const user = await User.findByPk(decoded.id, { attributes: { exclude: ['pin'] } });
+        const user = await User.findByPk(decoded.id);
 
         if (!user) {
             return res.status(401).json({ message: 'User not found.' });

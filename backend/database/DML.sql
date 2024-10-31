@@ -7,6 +7,14 @@ VALUES
 ON DUPLICATE KEY UPDATE
     name = VALUES(name);
 
+INSERT INTO exchange_rates (id, origin_currency_id, destination_currency_id, rate) VALUES
+    (1, 2, 1, 7.50),
+    (2, 3, 1, 10.00),
+    (3, 1, 2, 0.1333),
+    (4, 1, 3, 0.1000),
+    (5, 2, 3, 0.85),
+    (6, 3, 2, 1.18);
+
 INSERT INTO account_tiers (id, tier_name, opening_fee)
 VALUES 
     (1, 'basic', 200.00),
@@ -23,7 +31,7 @@ VALUES
 INSERT INTO users (id, username, name, lastname, email, pin, phone, genre, registration_date, active, notifyme, role_id) VALUES 
 (1, 'mariano', 'Mariano', 'Camposeco', 'mariano1941@outlook.es', 'a3db58d6c14880dacffd3275f5f897ef:bc5512706f3fae451eec82057ad290d4', '+50231840649', 'Male', UNIX_TIMESTAMP(), 1, 1, 2);
 
-INSERT INTO bank_accounts (id, account_name, account_number, user_id, account_tier_id, currency_id, balance, creation_date, is_delete)
+INSERT INTO bank_accounts (id, account_name, account_number, user_id, account_tier_id, currency_id, balance, creation_date, close)
 VALUES 
     (1, 'mariano.basic@kizunamaya.com', 1234567890, 1, 1, 1, 5000.00, UNIX_TIMESTAMP(), 0),
     (2, 'mariano.premium@kizunamaya.com', 9876543210, 1, 2, 2, 15000.00, UNIX_TIMESTAMP(), 0),

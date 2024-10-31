@@ -8,10 +8,11 @@ import {
     login
 } from '../controllers/authenticator-controller.js';
 import { administratorProtect } from '../middleware/role-protect-middleware.js';
+import protect from '../middleware/protect-middleware.js';
 
 const router = express.Router();
 
-router.post('/register', administratorProtect, register);
+router.post('/register', protect, administratorProtect, register);
 router.post('/login', login);
 
 export default router;

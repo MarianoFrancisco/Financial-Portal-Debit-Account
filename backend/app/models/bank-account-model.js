@@ -47,7 +47,7 @@ const BankAccount = sequelize.define('bank_accounts', {
         allowNull: false,
         defaultValue: Math.floor(Date.now() / 1000)
     },
-    is_delete: {
+    close: {
         type: DataTypes.INTEGER,
         allowNull: true,
         defaultValue: 0
