@@ -1,0 +1,101 @@
+<div class="mb-3">
+    <button class="btn btn-primary w-100" (click)="openAddUserModal()">Agregar Usuario</button>
+</div>
+@if(showForm){
+<form [formGroup]="userForm" class="container mt-4" (ngSubmit)="onSubmit()">
+    <div class="row">
+        <div class="col-md-6 mb-3">
+            <label for="username" class="form-label">Username</label>
+            <input type="text" id="username" formControlName="username" class="form-control"
+                placeholder="Ingrese su username"
+                [ngClass]="userForm.get('username')?.touched ? (userForm.get('username')?.invalid ? 'is-invalid' : '') : ''">
+        </div>
+
+        <div class="col-md-6 mb-3">
+            <label for="name" class="form-label">Nombre</label>
+            <input type="text" id="name" formControlName="name" class="form-control" placeholder="Ingrese su nombre"
+                [ngClass]="userForm.get('name')?.touched ? (userForm.get('name')?.invalid ? 'is-invalid' : '') : ''">
+        </div>
+    </div>
+
+    <div class="row">
+        <div class="col-md-6 mb-3">
+            <label for="lastname" class="form-label">Apellido</label>
+            <input type="text" id="lastname" formControlName="lastname" class="form-control"
+                placeholder="Ingrese su apellido"
+                [ngClass]="userForm.get('lastname')?.touched ? (userForm.get('lastname')?.invalid ? 'is-invalid' : '') : ''">
+        </div>
+
+        <div class="col-md-6 mb-3">
+            <label for="email" class="form-label">Email</label>
+            <input type="email" id="email" formControlName="email" class="form-control"
+                placeholder="Ingrese su correo electrónico"
+                [ngClass]="userForm.get('email')?.touched ? (userForm.get('email')?.invalid ? 'is-invalid' : '') : ''">
+        </div>
+    </div>
+
+    <div class="row">
+        <div class="col-md-6 mb-3">
+            <label for="pin" class="form-label">PIN</label>
+            <input type="password" id="pin" formControlName="pin" class="form-control" placeholder="Ingrese su PIN"
+                [ngClass]="userForm.get('pin')?.touched ? (userForm.get('pin')?.invalid ? 'is-invalid' : '') : ''">
+        </div>
+
+        <div class="col-md-6 mb-3">
+            <label for="phone" class="form-label">Teléfono</label>
+            <input type="tel" id="phone" formControlName="phone" class="form-control"
+                placeholder="Ingrese su número de teléfono"
+                [ngClass]="userForm.get('phone')?.touched ? (userForm.get('phone')?.invalid ? 'is-invalid' : '') : ''">
+        </div>
+    </div>
+
+    <div class="row">
+        <div class="col-md-6 mb-3">
+            <label for="genre" class="form-label">Género</label>
+            <select id="genre" formControlName="genre" class="form-select"
+                [ngClass]="userForm.get('genre')?.touched ? (userForm.get('genre')?.invalid ? 'is-invalid' : '') : ''">
+                <option value="">Seleccione...</option>
+                <option value="Male">Masculino</option>
+                <option value="Female">Femenino</option>
+                <option value="Other">Otro</option>
+            </select>
+        </div>
+
+        <div class="col-md-6 mb-3">
+            <div class="form-check form-switch">
+                <input type="checkbox" id="notifyme" formControlName="notifyme" class="form-check-input"
+                    (change)="onNotifyMeChange($event)">
+                <label class="form-check-label" for="notifyme">¿Activar notificaciones?</label>
+            </div>
+        </div>
+    </div>
+
+    <div class="row mb-3">
+        <div class="col-md-6">
+            <label for="role_id" class="form-label">Rol</label>
+            <select id="role_id" formControlName="role_id" class="form-select"
+                [ngClass]="userForm.get('role_id')?.touched ? (userForm.get('role_id')?.invalid ? 'is-invalid' : '') : ''">
+                <option value="1">Administrador</option>
+                <option value="2">Usuario</option>
+            </select>
+        </div>
+
+        <div class="col-md-6 d-flex align-items-end">
+            <button type="submit" class="btn btn-primary ms-2" [disabled]="userForm.invalid">Guardar usuario</button>
+        </div>
+    </div>
+</form>
+}
+@if (users.length !== 0) {
+<div class="container-fluid">
+    <div class="row">
+        @for (user of users; track $index) {
+        @if (user) {
+        <admin-users [user]="user" [id]="$index" class="col-6"></admin-users>
+        }
+        }
+    </div>
+</div>
+} @else {
+<shared-loading message="Cargando usuarios..." />
+}

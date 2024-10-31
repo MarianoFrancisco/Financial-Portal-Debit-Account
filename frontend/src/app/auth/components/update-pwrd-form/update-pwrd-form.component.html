@@ -1,0 +1,20 @@
+<form class="row g-2" [formGroup]="passwordForm">
+    <div class="col-12">
+        <label for="current_pin" class="form-label">PIN Actual</label>
+        <input class="form-control" type="password" id="current_pin" placeholder="••••••••" formControlName="current_pin"
+            [ngClass]="passwordForm.get('current_pin')?.touched ? (passwordForm.get('current_pin')?.invalid ? 'is-invalid' : '') : ''"
+        >
+    </div>
+    <div class="col-12">
+        <label for="pin" class="form-label">PIN</label>
+        <input class="form-control" type="password" id="pin" placeholder="••••••••" formControlName="pin"
+            [ngClass]="passwordForm.get('pin')?.touched ? (passwordForm.get('pin')?.invalid ? 'is-invalid' : '') : ''"
+        >
+    </div>
+    <div class="col-12">
+        <label for="confirmation_pin" class="form-label">Confirmar PIN</label>
+        <input class="form-control" type="password" id="confirmation_pin" placeholder="••••••••" formControlName="confirmation_pin"
+            [ngClass]="passwordForm.get('confirmation_pin')?.touched ? (passwordForm.get('confirmation_pin')?.invalid ? 'is-invalid' : '') : ''"
+        >
+    </div>
+</form>

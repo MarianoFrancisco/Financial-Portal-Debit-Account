@@ -1,0 +1,24 @@
+<div class="container mt-4">
+    <div class="card">
+        <div class="card-header text-center">
+            <h2 class="mb-0">Actualizar Balance</h2>
+        </div>
+        <div class="card-body">
+            <form [formGroup]="accountForm" (ngSubmit)="adjustBalance()">
+                <div class="mb-3">
+                    <label for="account_number" class="form-label">Número de Cuenta:</label>
+                    <input type="number" id="account_number" class="form-control" formControlName="account_number"
+                        placeholder="Ingrese el número de cuenta" required>
+                </div>
+                <div class="mb-3">
+                    <label for="amount" class="form-label">Monto:</label>
+                    <input type="number" id="amount" class="form-control" formControlName="amount"
+                        placeholder="Ingrese el monto" required>
+                </div>
+                <div class="text-center">
+                    <button type="submit" class="btn btn-danger">Actualizar Balance</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>

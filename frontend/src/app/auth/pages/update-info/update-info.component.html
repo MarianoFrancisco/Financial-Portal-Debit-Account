@@ -1,0 +1,37 @@
+<div class="d-flex justify-content-center align-items-center m-4">
+    <div class="rounded-4 shadow mx-3" style="width: 27rem; height: 33rem; background-color: white;">
+        <div class="row g-0 p-5">
+            <div class="col-12 text-center mb-3">
+                <h2 class="fw-bold">Actualizar Datos</h2>
+            </div>
+            <auth-user-data-form [user]="user" #updateUser>
+                <div class="otherCamp">
+                    <div class="col-12">
+                        <label for="email" class="form-label">Email</label>
+                        <input class="form-control" type="text" id="email" placeholder="mariano1941@outlook.es" [formControl]="email"
+                            [ngClass]="email.touched ? (email.invalid ? 'is-invalid' : '') : ''"
+                        >
+                    </div>
+                    <div class="col-12">
+                        <button class="btn btn-primary w-100 mt-4" (click)="onUpdateUser()">
+                            Actualizar
+                        </button>
+                    </div>
+                </div>
+            </auth-user-data-form>
+        </div>
+    </div>
+    <div class="rounded-4 shadow mx-3" style="width: 27rem; height: 28rem; background-color: white;">
+        <div class="row g-0 p-5">
+            <div class="col-12 text-center mb-3">
+                <h2 class="fw-bold">Cambia tu PIN</h2>
+            </div>
+            <auth-update-pwrd-form #updatePwd/>
+            <div class="col-12">
+                <button class="btn btn-primary w-100 mt-4" (click)="onUpdatePwd()">
+                    Actualizar
+                </button>
+            </div>
+        </div>
+    </div>
+</div>

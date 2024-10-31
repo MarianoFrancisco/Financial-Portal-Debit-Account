@@ -1,0 +1,96 @@
+<div>
+    <form [formGroup]="accountForm" class="mb-3">
+        <label for="accountNumber">Número de Cuenta:</label>
+        <input id="accountNumber" formControlName="accountNumber" type="number" class="form-control"
+            placeholder="Ingrese número de cuenta" />
+    </form>
+    <input type="date" class="form-control mb-3" [(ngModel)]="selectedDate" />
+    <div class="btn-group mb-3" role="group">
+        <button class="btn btn-primary" (click)="onDateChange(); onLoadTransactions()">Cargar Transacciones</button>
+        <button class="btn btn-secondary" (click)="onDateChange(); onLoadFrozenAccounts()">Cargar Cuentas Congeladas</button>
+        <button class="btn btn-info" (click)="onDateChange(); onLoadAccountDetails()">Cargar Detalles de Cuenta</button>
+        <button class="btn btn-success" (click)="onDateChange(); onLoadSummary()">Cargar Resumen</button>
+        <button class="btn btn-warning" (click)="onDateChange(); onLoadClosures()">Cargar Cierres de Cuenta</button>
+    </div>
+</div>
+
+<div *ngIf="transactions.length > 0" class="mb-4">
+    <h3>Transacciones</h3>
+    <div class="row">
+        <div class="col-md-4" *ngFor="let transaction of transactions">
+            <div class="card mb-3">
+                <div class="card-body">
+                    <h5 class="card-title">Transacción ID: {{ transaction.id }}</h5>
+                    <p class="card-text">Cuenta ID: {{ transaction.bank_account_id }}</p>
+                    <p class="card-text">Tipo: {{ transaction.transaction_type }}</p>
+                    <p class="card-text">Monto: {{ transaction.amount | currency }}</p>
+                    <p class="card-text">Fecha: {{ transaction.date | date:'short' }}</p>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div *ngIf="frozenAccounts.length > 0" class="mb-4">
+    <h3>Cuentas Congeladas</h3>
+    <div class="row">
+        <div class="col-md-4" *ngFor="let account of frozenAccounts">
+            <div class="card mb-3">
+                <div class="card-body">
+                    <h5 class="card-title">Número de Cuenta: {{ account.account_number }}</h5>
+                    <p class="card-text">ID: {{ account.id }}</p>
+                    <p class="card-text">Fecha de Creación: {{ account.creation_date | date:'short' }}</p>
+                    <p class="card-text">Saldo: {{ account.balance | currency }}</p>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div *ngIf="account.id" class="mb-4">
+    <h3>Detalles de Cuenta</h3>
+    <div class="card">
+        <div class="card-body">
+            <h5 class="card-title">Información de la Cuenta</h5>
+            <p class="card-text"><strong>Nombre de Cuenta:</strong> {{ account.account_name }}</p>
+            <p class="card-text"><strong>Número de Cuenta:</strong> {{ account.account_number }}</p>
+            <p class="card-text"><strong>Saldo:</strong> {{ account.balance | currency }}</p>
+            <p class="card-text"><strong>Usuario:</strong> {{ account.username }}</p>
+            <p class="card-text"><strong>Nombre de Nivel:</strong> {{ account.tier_name }}</p>
+            <p class="card-text"><strong>Fecha de Creación:</strong> {{ account.creation_date | date:'short' }}</p>
+        </div>
+    </div>
+</div>
+
+<div *ngIf="summary.length > 0" class="mb-4">
+    <h3>Resumen</h3>
+    <div class="row">
+        <div class="col-md-4" *ngFor="let item of summary">
+            <div class="card mb-3">
+                <div class="card-body">
+                    <h5 class="card-title">Resumen {{item.total_accounts}}</h5>
+                    <p class="card-text"><strong>Cierres:</strong> {{ item.close }}</p>
+                    <p class="card-text"><strong>Total Cuentas:</strong> {{ item.total_accounts }}</p>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div *ngIf="closure.length > 0" class="mb-4">
+    <h3>Cierres de Cuenta</h3>
+    <div class="row">
+        <div class="col-md-4" *ngFor="let close of closure">
+            <div class="card mb-3">
+                <div class="card-body">
+                    <h5 class="card-title">Cierre de Cuenta ID: {{ close.bank_account_id }}</h5>
+                    <p class="card-text"><strong>Nombre de Cuenta:</strong> {{ close.account_name }}</p>
+                    <p class="card-text"><strong>Número de Cuenta:</strong> {{ close.account_number }}</p>
+                    <p class="card-text"><strong>Razón de Cierre:</strong> {{ close.closure_reason }}</p>
+                    <p class="card-text"><strong>Fecha de Cierre:</strong> {{ close.closure_date | date:'short' }}</p>
+                    <p class="card-text"><strong>Usuario:</strong> {{ close.username }}</p>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

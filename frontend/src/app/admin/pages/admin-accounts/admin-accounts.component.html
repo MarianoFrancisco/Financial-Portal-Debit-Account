@@ -1,0 +1,53 @@
+<div class="mb-3">
+    <button class="btn btn-primary w-100" (click)="openAddBankAccountModal()">Agregar Cuenta</button>
+</div>
+@if(showForm){
+<form [formGroup]="accountForm" class="container mt-4" (ngSubmit)="onSubmit()">
+    <div class="row">
+        <div class="col-md-6 mb-3">
+            <label for="username" class="form-label">Username</label>
+            <input type="text" id="username" formControlName="username" class="form-control"
+                placeholder="Ingrese su username"
+                [ngClass]="accountForm.get('username')?.touched ? (accountForm.get('username')?.invalid ? 'is-invalid' : '') : ''">
+        </div>
+
+        <div class="col-md-6 mb-3">
+            <label for="accountTierId" class="form-label">Nivel de Cuenta</label>
+            <select id="accountTierId" formControlName="account_tier_id" class="form-select"
+                [ngClass]="accountForm.get('account_tier_id')?.touched ? (accountForm.get('account_tier_id')?.invalid ? 'is-invalid' : '') : ''">
+                <option value="">Seleccione un nivel...</option>
+                <option value="1">Basic</option>
+                <option value="2">Premium</option>
+                <option value="3">Plus</option>
+            </select>
+        </div>
+    </div>
+
+    <div class="row">
+        <div class="col-md-6 mb-3">
+            <label for="balance" class="form-label">Balance</label>
+            <input type="number" id="balance" formControlName="balance" class="form-control"
+                placeholder="Ingrese el balance"
+                [ngClass]="accountForm.get('balance')?.touched ? (accountForm.get('balance')?.invalid ? 'is-invalid' : '') : ''">
+        </div>
+        <div class="col-md-6 mb-3">
+            <div class="col-md-6 d-flex align-items-end">
+                <button type="submit" class="btn btn-primary ms-2" [disabled]="accountForm.invalid">Guardar Cuenta</button>
+            </div>
+        </div>
+    </div>
+</form>
+}
+@if (accounts.length !== 0) {
+<div class="container-fluid">
+    <div class="row">
+        @for (account of accounts; track $index) {
+        @if (account) {
+        <admin-accounts [bank]="account" [id]="$index" class="col-6"></admin-accounts>
+        }
+        }
+    </div>
+</div>
+} @else {
+<shared-loading message="Cargando usuarios..." />
+}

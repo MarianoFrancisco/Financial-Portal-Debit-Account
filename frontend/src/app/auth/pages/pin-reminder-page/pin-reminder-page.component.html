@@ -1,0 +1,28 @@
+<div class="container d-flex flex-column h-100">
+    <form class="row g-3 m-4" [formGroup]="pinReminderForm" (ngSubmit)="onPinReminder()">
+        <div class="col-12 text-center mb-4 mt-4">
+            <h2 class="fw-bold">Recordar PIN</h2>
+        </div>
+        <div class="col-12">
+            <label for="email" class="form-label">Correo</label>
+            <input class="form-control" type="text" id="email" 
+                placeholder="mariano1941@outlook.es" formControlName="email"
+                [ngClass]="pinReminderForm.get('email')?.touched ? (pinReminderForm.get('email')?.invalid ? 'is-invalid' : '') : ''" 
+            >
+        </div>
+        <div class="col-12">
+            <button type="submit" class="btn btn-primary w-100 mt-3">
+                Enviar PIN
+            </button>
+        </div>
+    </form>
+    <div class="mt-auto">
+        <div class="border-bottom mx-4 mb-3"></div>
+        <div class="text-end px-5 mt-auto pb-3">
+            <span class="mx-2">¿Quieres ingresar?</span>
+            <a routerLink="/auth/sign-in" class="link-primary link-offset-2 link-underline-opacity-25 link-underline-opacity-100-hover">
+                Iniciar Sesión
+            </a>
+        </div>
+    </div>
+</div>

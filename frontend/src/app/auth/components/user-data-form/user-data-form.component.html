@@ -1,0 +1,30 @@
+<form class="row g-2" [formGroup]="userDataForm">
+    <div class="col-6">
+        <label for="name" class="form-label">Nombre</label>
+        <input class="form-control" type="text" id="name" placeholder="Mariano" formControlName="name"
+            [ngClass]="userDataForm.get('name')?.touched ? (userDataForm.get('name')?.invalid ? 'is-invalid' : '') : ''">
+    </div>
+    <div class="col-6">
+        <label for="lastname" class="form-label">Apellido</label>
+        <input class="form-control" type="text" id="lastname" placeholder="Camposeco" formControlName="lastname"
+            [ngClass]="userDataForm.get('lastname')?.touched ? (userDataForm.get('lastname')?.invalid ? 'is-invalid' : '') : ''">
+    </div>
+    <div class="col-6">
+        <label for="phone" class="form-label">Teléfono</label>
+        <input class="form-control" type="text" id="phone" placeholder="00000000" formControlName="phone"
+            [ngClass]="userDataForm.get('phone')?.touched ? (userDataForm.get('phone')?.invalid ? 'is-invalid' : '') : ''">
+    </div>
+    <div class="col-6 d-flex align-items-center">
+        <label for="notifyme" class="form-label me-3 mb-0">¿Activar notificaciones?</label>
+        <div class="form-check form-switch">
+          <input 
+            class="form-check-input" 
+            type="checkbox" 
+            id="notifyme" 
+            formControlName="notifyme"
+            (change)="onNotifyMeChange($event)"
+          >
+        </div>
+      </div>
+    <ng-content select=".otherCamp"></ng-content>
+</form>

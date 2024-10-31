@@ -1,13 +1,30 @@
-import { Component } from '@angular/core';
-import { RouterOutlet } from '@angular/router';
+import { Component, OnDestroy, OnInit, inject } from '@angular/core';
+import { AuthService } from './auth/services/auth.service';
+import { Subscription } from 'rxjs';
+import { AuthStatus } from './auth/interfaces/user.interface';
 
 @Component({
   selector: 'app-root',
-  standalone: true,
-  imports: [RouterOutlet],
   templateUrl: './app.component.html',
-  styleUrl: './app.component.css'
+  styleUrls: ['./app.component.css']
 })
-export class AppComponent {
-  title = 'frontend';
+export class AppComponent implements OnInit, OnDestroy {
+
+  private authService = inject(AuthService);
+  public isLoading: boolean = true;
+  public isLoggedIn?: Subscription;
+
+
+  ngOnInit(): void {
+    this.isLoggedIn = this.authService.isLoggedIn().subscribe(status => {
+      if (status !== AuthStatus.Checking) {
+        this.isLoading = false;
+      }
+    });
+  }
+
+  ngOnDestroy(): void {
+    this.isLoggedIn?.unsubscribe();
+  }
+
 }

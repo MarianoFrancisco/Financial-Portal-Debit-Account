@@ -1,0 +1,83 @@
+<div class="card m-2">
+    <div class="card-header text-center">
+        Cuenta No. {{ id + 1 }}
+    </div>
+    <div class="card-body">
+        <div class="row">
+            <div class="col-12">
+                <ul class="list-group list-group-flush">
+                    <li class="list-group-item">
+                        <div class="d-flex justify-content-between">
+                            <span><span class="fw-bold">Correo de cuenta: </span>{{ bank.account_name }}</span>
+                            <span><span class="fw-bold">Número de cuenta: </span>{{ bank.account_number }}</span>
+                        </div>
+                        <div class="d-flex justify-content-between">
+                            <span><span class="fw-bold">Balance: </span>{{ bank.balance }}</span>
+                            <span><span class="fw-bold">Fecha de creación: </span>{{ (bank.creation_date * 1000) | date:
+                                'd/M/yyyy' }}</span>
+                        </div>
+                        <div class="d-flex justify-content-between">
+                            <span>
+                                <span class="fw-bold">Moneda: </span>{{ bank.currency_name }}
+                            </span>
+                            <span>
+                                <span class="fw-bold">Estado: </span>{{ bank.close === 1 ? 'Cerrado' : 'Activo' }}
+                            </span>
+                        </div>
+                        <div class="d-flex justify-content-between">
+                            <span>
+                                <span class="fw-bold">Usuario: </span>{{ bank.username }}
+                            </span>
+                            <span>
+                                <span><span class="fw-bold">Categoría: </span>{{ bank.tier_name }}</span>
+                            </span>
+                        </div>
+                    </li>
+                    <li class="list-group-item d-flex justify-content-between align-items-center">
+                        @if (bank.close === 0) {
+                        <label for="closeReason" class="form-label">Motivo del cierre:</label>
+                        <input type="text" id="closeReason" class="form-control" [(ngModel)]="closeReason"
+                            placeholder="Ingrese motivo del cierre">
+                        <button type="button" class="btn btn-danger mt-2" (click)="closeAccount(bank.id, closeReason)">
+                            Cerrar cuenta
+                        </button>
+                        } @else {
+                        <button type="button" class="btn btn-primary btn-lg d-flex align-items-center"
+                            (click)="activateAccount(bank.id)">
+                            <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" fill="currentColor"
+                                class="bi bi-person-lines-fill me-2" viewBox="0 0 16 16">
+                                <path
+                                    d="M2 1a1 1 0 0 0-1 1v12a1 1 0 0 0 1 1h12a1 1 0 0 0 1-1V2a1 1 0 0 0-1-1H9.5a1 1 0 0 0-1 1v7.293l2.646-2.647a.5.5 0 0 1 .708.708l-3.5 3.5a.5.5 0 0 1-.708 0l-3.5-3.5a.5.5 0 1 1 .708-.708L7.5 9.293V2a2 2 0 0 1 2-2H14a2 2 0 0 1 2 2v12a2 2 0 0 1-2 2H2a2 2 0 0 1-2-2V2a2 2 0 0 1 2-2h2.5a.5.5 0 0 1 0 1z" />
+                            </svg>
+                            Activar cuenta
+                        </button>
+                        }
+                    </li>
+                    @if (bank.close === 0) {
+                    <li class="list-group-item d-flex justify-content-between align-items-center">
+                        <div class="d-flex align-items-center w-100">
+                            <div class="me-3 flex-grow-1">
+                                <label for="accountTierSelect" class="form-label">Seleccionar cuenta:</label>
+                                <select id="accountTierSelect" class="form-select" [(ngModel)]="selectedAccountTier">
+                                    <option value="1">Basic</option>
+                                    <option value="2">Premium</option>
+                                    <option value="3">Plus</option>
+                                </select>
+                            </div>
+                            <div class="form-check form-switch me-3">
+                                <input class="form-check-input" type="checkbox" id="retainAccount"
+                                    [(ngModel)]="retainAccount">
+                                <label class="form-check-label" for="retainAccount">Conservar cuenta</label>
+                            </div>
+                            <button type="button" class="btn btn-primary"
+                                (click)="changeAccount(bank.username, bank.id, selectedAccountTier, retainAccount)">
+                                Cambiar de cuenta
+                            </button>
+                        </div>
+                    </li>
+                    }
+                </ul>
+            </div>
+        </div>
+    </div>
+</div>

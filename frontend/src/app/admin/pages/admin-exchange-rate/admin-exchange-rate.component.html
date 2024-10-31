@@ -1,0 +1,13 @@
+@if (exchangeRates.length !== 0) {
+    <div class="container-fluid">
+        <div class="row">
+            @for (exchangeRate of exchangeRates; track $index) {
+                @if (exchangeRate) {
+                    <admin-exchange-rate [exchangeRate]="exchangeRate" [id]="$index" class="col-6"></admin-exchange-rate>
+                }
+            }
+        </div>
+    </div>
+} @else {
+    <shared-loading message="Cargando cambios de divisas..." />
+}

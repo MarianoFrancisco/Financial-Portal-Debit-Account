@@ -1,0 +1,22 @@
+.card {
+    border-radius: 15px;
+    overflow: hidden;
+}
+
+.card-header {
+    border-bottom: 2px solid #007bff; /* Color de borde que prefieras */
+    font-size: 1.5rem; /* Tamaño de fuente */
+}
+
+.card-body {
+    font-size: 1.1rem; /* Tamaño de fuente más grande para el cuerpo */
+}
+
+.badge {
+    font-size: 1.1rem; /* Tamaño de fuente de las etiquetas */
+    padding: 0.5rem 1rem; /* Espaciado dentro de las etiquetas */
+}
+
+.card-footer {
+    background-color: #f8f9fa; /* Color de fondo del pie de página */
+}
