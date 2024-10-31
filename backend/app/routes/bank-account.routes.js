@@ -6,6 +6,7 @@ import express from 'express';
 import {
     getLinkedAccounts,
     getUserAccounts,
+    getAllBankAccounts,
     updateAccountBalance,
     createBankAccount,
     changeAccountType,
@@ -20,6 +21,7 @@ const router = express.Router();
 
 router.get('/linked', apiProtect, getLinkedAccounts);
 router.get('/user', protect, userProtect, getUserAccounts);
+router.get('', protect, administratorProtect, getAllBankAccounts);
 router.put('/update-balance', combinedProtect, updateAccountBalance);
 router.put('/change-type', protect, administratorProtect, changeAccountType);
 router.patch('/:account_id', protect, administratorProtect, updateBankAccount);

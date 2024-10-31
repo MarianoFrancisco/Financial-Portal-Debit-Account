@@ -14,12 +14,12 @@ const getExchangeRates = async (req, res) => {
                 {
                     model: Currency,
                     as: 'originCurrency',
-                    attributes: ['name'],
+                    attributes: ['id', 'name'],
                 },
                 {
                     model: Currency,
                     as: 'destinationCurrency',
-                    attributes: ['name'],
+                    attributes: ['id', 'name'],
                 },
             ],
         });
@@ -30,6 +30,8 @@ const getExchangeRates = async (req, res) => {
 
         const exchange_rate = exchangeRates.map(rate => ({
             id: rate.id,
+            originCurrencyId: rate.originCurrency.id,
+            destinationCurrencyId: rate.destinationCurrency.id,
             originCurrencyName: rate.originCurrency.name,
             destinationCurrencyName: rate.destinationCurrency.name,
             rate: parseFloat(rate.rate),
@@ -111,21 +113,21 @@ const updateExchangeRate = async (req, res) => {
 
         await exchangeRate.update({ rate }, { transaction });
 
-        const inverseRate = 1 / rate;
+        //const inverseRate = 1 / rate;
 
-        const inverseExchangeRate = await ExchangeRate.findOne({
-            where: {
-                origin_currency_id: destination_currency_id,
-                destination_currency_id: origin_currency_id
-            },
-            transaction
-        });
+        //const inverseExchangeRate = await ExchangeRate.findOne({
+        //    where: {
+        //        origin_currency_id: destination_currency_id,
+        //        destination_currency_id: origin_currency_id
+        //    },
+        //    transaction
+        //});
 
-        if (!inverseExchangeRate) {
-            return res.status(404).json({ message: 'Inverse exchange rate not found.' });
-        }
+        //if (!inverseExchangeRate) {
+        //    return res.status(404).json({ message: 'Inverse exchange rate not found.' });
+        //}
 
-        await inverseExchangeRate.update({ rate: inverseRate }, { transaction });
+        //await inverseExchangeRate.update({ rate: inverseRate }, { transaction });
 
         await transaction.commit();
         res.status(200).json({ message: 'Exchange rate updated successfully.' });

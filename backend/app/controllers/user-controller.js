@@ -3,6 +3,7 @@
 * Mariano Camposeco {@literal (mariano1941@outlook.es)}
 */
 import User from '../models/user-model.js';
+import Role from '../models/role-model.js';
 import sequelize from '../../config/database-connection.js';
 import { encryptPin } from '../utils/encryption.js';
 
@@ -19,6 +20,66 @@ const getUser = async (req, res) => {
         res.status(200).json(user);
     } catch (error) {
         res.status(500).json({ message: `Error retrieving user: ${error.message}` });
+    }
+};
+
+const getUsers = async (req, res) => {
+    try {
+        const users = await User.findAll({
+            attributes: [
+                'id', 'username', 'name', 'lastname', 'email', 'phone', 'genre', 'registration_date', 'notifyme', 'active',
+                [sequelize.col('role.role_name'), 'role_name']
+            ],
+            include: [
+                {
+                    model: Role,
+                    as: 'role',
+                    attributes: []
+                }
+            ]
+        });
+
+        if (!users || users.length === 0) {
+            return res.status(404).json({ message: 'No users found.' });
+        }
+
+        res.status(200).json(users);
+    } catch (error) {
+        res.status(500).json({ message: `Error retrieving users: ${error.message}` });
+    }
+};
+
+const changeUserActiveStatus = async (req, res) => {
+    const { userId, activeStatus } = req.body;
+
+    if (userId == null || activeStatus == null) {
+        return res.status(400).json({ message: 'User ID and active status are required.' });
+    }
+
+    const transaction = await sequelize.transaction();
+
+    try {
+        const [_, affectedRows] = await sequelize.query(
+            `UPDATE users
+            SET active = :activeStatus
+            WHERE id = :userId`,
+            {
+                replacements: { activeStatus, userId },
+                type: sequelize.QueryTypes.UPDATE,
+                transaction,
+            }
+        );
+
+        if (affectedRows === 0) {
+            await transaction.rollback();
+            return res.status(404).json({ message: 'User not found or no changes made.' });
+        }
+
+        await transaction.commit();
+        return res.status(200).json({ message: 'User active status updated successfully.' });
+    } catch (error) {
+        await transaction.rollback();
+        return res.status(500).json({ message: 'Error updating user active status: ' + error.message });
     }
 };
 
@@ -93,8 +154,8 @@ const updateUser = async (req, res) => {
         });
 
         await transaction.commit();
-        return res.status(200).json({ 
-            message: 'Perfil de usuario actualizado correctamente.', 
+        return res.status(200).json({
+            message: 'Perfil de usuario actualizado correctamente.',
             user: updatedUser[0]
         });
     } catch (error) {
@@ -105,6 +166,8 @@ const updateUser = async (req, res) => {
 
 export {
     getUser,
+    getUsers,
+    changeUserActiveStatus,
     changePin,
     updateUser
 };

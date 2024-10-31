@@ -24,7 +24,8 @@ const AccountClosure = sequelize.define('AccountClosure', {
     },
     closure_date: {
         type: DataTypes.BIGINT,
-        allowNull: false,
+        allowNull: true,
+        defaultValue: Math.floor(Date.now() / 1000)
     },
 }, {
     tableName: 'account_closures',

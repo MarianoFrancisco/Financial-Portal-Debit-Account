@@ -63,6 +63,10 @@ const login = async (req, res) => {
             return res.status(404).json({ message: 'User not found.' });
         }
 
+        if (user.active === 0) {
+            return res.status(403).json({ message: 'User account is inactive.' });
+        }
+
         const isMatch = await user.matchPassword(pin);
 
         if (!isMatch) {

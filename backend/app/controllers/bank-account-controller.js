@@ -44,6 +44,58 @@ const getLinkedAccounts = async (req, res) => {
     }
 };
 
+const getAllBankAccounts = async (req, res) => {
+    try {
+        const bankAccounts = await BankAccount.findAll({
+            include: [
+                {
+                    model: User,
+                    as: 'user',
+                    attributes: ['username'],
+                },
+                {
+                    model: AccountTier,
+                    as: 'tier',
+                    attributes: ['tier_name'],
+                },
+                {
+                    model: Currency,
+                    as: 'currency',
+                    attributes: ['name'],
+                }
+            ],
+            attributes: [
+                'id',
+                'account_name',
+                'account_number',
+                'balance',
+                'creation_date',
+                'close'
+            ],
+        });
+
+        if (!bankAccounts || bankAccounts.length === 0) {
+            return res.status(404).json({ message: 'No bank accounts found.' });
+        }
+
+        const response = bankAccounts.map(account => ({
+            id: account.id,
+            account_name: account.account_name,
+            account_number: account.account_number,
+            balance: account.balance,
+            creation_date: account.creation_date,
+            close: account.close,
+            username: account.user ? account.user.username : null,
+            tier_name: account.tier ? account.tier.tier_name : null,
+            currency_name: account.currency ? account.currency.name : null
+        }));
+
+        res.status(200).json(response);
+    } catch (error) {
+        res.status(500).json({ message: `Error retrieving bank accounts: ${error.message}` });
+    }
+};
+
 const getUserAccounts = async (req, res) => {
     const userId = req.user_id;
 
@@ -62,6 +114,7 @@ const getUserAccounts = async (req, res) => {
                 { model: Currency, as: 'currency', attributes: [] }
             ],
             attributes: [
+                'id',
                 'account_name',
                 'account_number',
                 'balance',
@@ -144,7 +197,7 @@ const updateAccountBalance = async (req, res) => {
 };
 
 const createBankAccount = async (req, res) => {
-    const { user_id, account_tier_id, balance: balanceInput } = req.body;
+    const { username, account_tier_id, balance: balanceInput } = req.body;
 
     const balance = parseFloat(balanceInput);
     if (isNaN(balance)) {
@@ -154,13 +207,13 @@ const createBankAccount = async (req, res) => {
     const transaction = await sequelize.transaction();
 
     try {
-        const user = await User.findByPk(user_id, { transaction });
+        const user = await User.findOne({ where: { username }, transaction });
         if (!user) {
             return res.status(404).json({ message: 'User not found.' });
         }
 
         const tiers = await AccountTier.findAll({ transaction });
-        const selectedTier = tiers.find(tier => tier.id === account_tier_id);
+        const selectedTier = tiers.find(tier => tier.id === parseInt(account_tier_id, 10));
         if (!selectedTier) {
             await transaction.rollback();
             return res.status(400).json({ message: 'Invalid account tier selected.' });
@@ -197,13 +250,25 @@ const createBankAccount = async (req, res) => {
 };
 
 const changeAccountType = async (req, res) => {
-    const { user_id, old_account_id, new_account_tier_id, keep_old_account } = req.body;
+    const { username, old_account_id, new_account_tier_id, keep_old_account } = req.body;
 
     const transaction = await sequelize.transaction();
 
     try {
+
+        const user = await User.findOne({
+            where: { username },
+            attributes: ['id']
+        });
+
+        if (!user) {
+            await transaction.rollback();
+            return res.status(404).json({ message: 'User not found.' });
+        }
+
+        const user_id = user.id;
         const oldAccount = await BankAccount.findOne({
-            where: { id: old_account_id, user_id: user_id },
+            where: { id: old_account_id, user_id: user_id},
             include: [{
                 model: User,
                 as: 'user',
@@ -347,6 +412,7 @@ const updateBankAccount = async (req, res) => {
 export {
     getLinkedAccounts,
     getUserAccounts,
+    getAllBankAccounts,
     updateAccountBalance,
     createBankAccount,
     changeAccountType,

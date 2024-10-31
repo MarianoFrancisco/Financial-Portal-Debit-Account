@@ -18,14 +18,16 @@ const getAccountTransactions = async (req, res) => {
         const [totals] = await sequelize.query(
             `SELECT 
                 SUM(CASE WHEN transaction_type = 'Income' THEN amount ELSE 0 END) AS total_ingresos,
-                SUM(CASE WHEN transaction_type = 'Expense' THEN amount ELSE 0 END) AS total_egresos
+                SUM(CASE WHEN transaction_type = 'Expense' THEN amount ELSE 0 END) AS total_egresos,
+                COUNT(CASE WHEN transaction_type = 'Income' THEN 1 END) AS count_ingresos,
+                COUNT(CASE WHEN transaction_type = 'Expense' THEN 1 END) AS count_egresos
             FROM transactions
             WHERE bank_account_id = :account_id 
               AND transaction_date <= :date`,
             { replacements: { account_id, date }, type: sequelize.QueryTypes.SELECT }
         );
 
-        res.status(200).json({ account_id, totals });
+        res.status(200).json(totals);
     } catch (error) {
         res.status(500).json({ message: 'Error generating report: ' + error.message });
     }
@@ -45,7 +47,7 @@ const getAllAccountTransactions = async (req, res) => {
             order: [['transaction_date', 'ASC']]
         });
 
-        res.status(200).json({ transactions });
+        res.status(200).json(transactions);
     } catch (error) {
         res.status(500).json({ message: 'Error generating report: ' + error.message });
     }
@@ -71,7 +73,7 @@ const getFrozenAccounts = async (req, res) => {
             },
         });
 
-        res.status(200).json({ frozenAccounts });
+        res.status(200).json(frozenAccounts);
     } catch (error) {
         res.status(500).json({ message: 'Error generating report: ' + error.message });
     }
@@ -84,16 +86,30 @@ const getAccountDetail = async (req, res) => {
         const account = await BankAccount.findOne({
             where: { account_number },
             include: [
-                { model: User, as: 'user', attributes: ['username'] },
-                { model: AccountTier, as: 'tier', attributes: ['tier_name'] }
+                {
+                    model: User,
+                    as: 'user',
+                    attributes: []
+                },
+                {
+                    model: AccountTier,
+                    as: 'tier',
+                    attributes: []
+                }
             ],
+            attributes: {
+                include: [
+                    [sequelize.col('user.username'), 'username'],
+                    [sequelize.col('tier.tier_name'), 'tier_name']
+                ]
+            }
         });
 
         if (!account) {
             return res.status(404).json({ message: 'Account not found.' });
         }
 
-        res.status(200).json({ account });
+        res.status(200).json(account);
     } catch (error) {
         res.status(500).json({ message: 'Error generating report: ' + error.message });
     }
@@ -106,7 +122,7 @@ const getAccountStatusSummary = async (req, res) => {
             group: ['close'],
         });
 
-        res.status(200).json({ summary });
+        res.status(200).json(summary);
     } catch (error) {
         res.status(500).json({ message: 'Error generating report: ' + error.message });
     }
@@ -135,7 +151,7 @@ const getAccountClosures = async (req, res) => {
             order: [['closure_date', 'ASC']],
         });
 
-        res.status(200).json({ closures });
+        res.status(200).json(closures);
     } catch (error) {
         res.status(500).json({ message: 'Error generating report: ' + error.message });
     }
