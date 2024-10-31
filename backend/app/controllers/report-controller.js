@@ -65,7 +65,7 @@ const getFrozenAccounts = async (req, res) => {
             attributes: ['id', 'account_number', 'creation_date', 'balance'],
             where: {
                 id: {
-                    [Op.notIn]: sequelize.literal('(SELECT DISTINCT bank_account_id FROM transactions)')
+                    [Op.notIn]: sequelize.literal('(SELECT DISTINCT bank_account_id FROM transactions)'),
                 },
                 creation_date: {
                     [Op.lte]: date,
@@ -73,11 +73,11 @@ const getFrozenAccounts = async (req, res) => {
             },
         });
 
-        res.status(200).json(frozenAccounts);
+        res.status(200).json(frozenAccounts.map(account => account.get({ plain: true })));
     } catch (error) {
         res.status(500).json({ message: 'Error generating report: ' + error.message });
     }
-}
+};
 
 const getAccountDetail = async (req, res) => {
     const { account_number } = req.params;
@@ -122,7 +122,7 @@ const getAccountStatusSummary = async (req, res) => {
             group: ['close'],
         });
 
-        res.status(200).json(summary);
+        res.status(200).json(summary.map(item => item.get({ plain: true })));
     } catch (error) {
         res.status(500).json({ message: 'Error generating report: ' + error.message });
     }
